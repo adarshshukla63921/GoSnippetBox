@@ -1,0 +1,1 @@
+Holds the non-application specific code used in the project like validation, helpers and sql database models.
