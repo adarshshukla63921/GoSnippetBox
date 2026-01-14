@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func home(w http.ResponseWriter, r *http.Request){
+func (app *application) home(w http.ResponseWriter, r *http.Request){
 	if r.URL.Path != "/"{
 		http.NotFound(w,r)
 		return
@@ -21,6 +21,7 @@ func home(w http.ResponseWriter, r *http.Request){
 	ts , err := template.ParseFiles(files...)
 
 	if err != nil {
+		app.logError.Print(err)
 		http.Error(w,"Something went wrong",http.StatusInternalServerError)
 		return
 	}
@@ -28,13 +29,14 @@ func home(w http.ResponseWriter, r *http.Request){
 	err = ts.ExecuteTemplate(w,"base",nil)
 
 	if err != nil {
+		app.logError.Print(err)
 		http.Error(w,"Something went wrong",http.StatusInternalServerError)
 		return
 	}
 }
 
 
-func snippetCreate(w http.ResponseWriter, r *http.Request){
+func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request){
 	if r.Method != http.MethodPost {
 		http.Error(w,"Wrong Method Used", http.StatusMethodNotAllowed)
 		return
@@ -42,7 +44,7 @@ func snippetCreate(w http.ResponseWriter, r *http.Request){
 	w.Write([]byte("This will allow you to create snippets"))
 }
 
-func snippetView(w http.ResponseWriter, r *http.Request){
+func (app *application) snippetView(w http.ResponseWriter, r *http.Request){
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 
 	if err != nil{

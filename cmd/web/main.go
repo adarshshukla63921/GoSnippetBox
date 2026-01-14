@@ -6,7 +6,10 @@ import (
 	"net/http"
 	"os"
 )
-
+type application struct{
+	logInfo  *log.Logger
+	logError *log.Logger
+}
 func main() {
 	addr := flag.String("addr",":8080","HTTP Network Address")
 	flag.Parse()
@@ -17,12 +20,16 @@ func main() {
 	fileserver := http.FileServer(http.Dir("ui\\static"))
 	mux.Handle("/static/",http.StripPrefix("/static",fileserver))
 
-	
-	mux.HandleFunc("/",home)
+	app := &application{
+		logInfo: logInfo,
+		logError: logError,
+	}
 
-	mux.HandleFunc("/create",snippetCreate)
+	mux.HandleFunc("/",app.home)
 
-	mux.HandleFunc("/view",snippetView)
+	mux.HandleFunc("/create",app.snippetCreate)
+
+	mux.HandleFunc("/view",app.snippetView)
 
 	logInfo.Print("server is runnig at",*addr)
 	srv := &http.Server{
